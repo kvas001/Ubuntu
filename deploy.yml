@@ -3,9 +3,13 @@
   
   services:
     app:
-      image: ubuntu:latest
+      image: ubuntu:20.04
       env:
           - "SSH_PASS="
+      params:
+        storage:
+          default:
+            mount: /root/
       command:
           - "bash"
           - "-c"
@@ -26,17 +30,25 @@
         - port: 22
           as: 22
           to:
-            - global: true 
+            - global: true
+        - port: 26656
+          to:
+            - global: true
   profiles:
     compute:
       app:
         resources:
           cpu:
-            units: 0.5
+            units: 4
           memory:
-            size: 1Gi
+            size: 8Gi
           storage:
-            size: 1Gi
+            - size: 5Gi
+            - name: data
+              size: 150Gi
+              attributes:
+                persistent: true
+                class: beta3
     placement:
       akash: 
         attributes:
